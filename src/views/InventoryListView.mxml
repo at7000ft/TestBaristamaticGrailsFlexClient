@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:NavigatorContent xmlns:fx="http://ns.adobe.com/mxml/2009"
+                    xmlns:s="library://ns.adobe.com/flex/spark"
+                    xmlns:mx="library://ns.adobe.com/flex/mx"
+                    width="100%"
+                    height="100%">
+   <!-- InventoryListView.mxml ~ Author: rholland ~ Dec 2, 2010 ~~~~~~~~~~~~~~~~~~~~~~ -->
+
+   <fx:Script>
+      <![CDATA[
+			import controllers.ApplicationEvents;
+			import controllers.ApplicationModel;
+			
+			import domain.InventoryEntry;
+			
+			import events.InventoryEvent;
+			
+			import mx.managers.PopUpManager;
+			
+			import org.springextensions.actionscript.core.event.EventBus;
+			
+			import views.popups.NewIngredientWindow;
+
+         /*  Spring injected  */
+         [Autowired]
+         [Bindable]
+         public var appModel:ApplicationModel;
+			
+			private var popup:NewIngredientWindow;
+
+			//Put a restock event on the EventBus
+         private function restockInventory():void {
+            var event:Event=new Event(ApplicationEvents.RESTOCK_INVENTORY);
+            trace("orderDrink: dispatching RESTOCK_INVENTORY");
+            EventBus.dispatchEvent(event);
+         }
+
+			//Open the NewIngredientWindow and wait for an InventoryEvent
+         private function addInventoryEntry():void {
+				popup = new NewIngredientWindow();
+				popup.addEventListener(Event.CLOSE, closeHandler);
+				popup.addEventListener(ApplicationEvents.ADD_INVENTORY_ENTRY, addHandler);
+				popup.addEventListener("cancel", closeHandler);
+				PopUpManager.addPopUp(popup, this, true)
+				PopUpManager.centerPopUp(popup);
+				popup.setInitialFocus();
+         }
+	 
+			//NewIngredientWindow has dispatched an InventoryEvent, put event on EventBus for ApplicationController
+			//to handle and close popup window
+			private function addHandler(event:InventoryEvent):void
+			{
+				EventBus.dispatchEvent(event);
+				PopUpManager.removePopUp(popup); 
+			}
+			private function closeHandler(event:Event):void
+			{
+				PopUpManager.removePopUp(popup);
+			}
+      ]]>
+   </fx:Script>
+
+   <fx:Declarations>
+      <mx:CurrencyFormatter id="usdFormatter"
+                            precision="2"
+                            currencySymbol="$"
+                            decimalSeparatorFrom="."
+                            decimalSeparatorTo="."
+                            useNegativeSign="true"
+                            useThousandsSeparator="true"
+                            alignSymbol="left"/>
+   </fx:Declarations>
+
+   <s:VGroup height="100%" width="100%" horizontalAlign="center">
+      <mx:Label text="Inventory List" fontSize="24" styleName="logo"/>
+      <mx:DataGrid id="dg"
+                   dataProvider="{appModel.inventorylist}"
+                   variableRowHeight="true"
+                   rowCount="{appModel.inventorylist.length}"
+                   fontSize="14"
+                   width="100%">
+         <mx:columns>
+            <mx:DataGridColumn dataField="displayName" headerText="Display Name"/>
+            <mx:DataGridColumn dataField="cost" headerText="Cost">
+               <mx:itemRenderer>
+                  <fx:Component>
+                     <mx:Label text="{outerDocument.usdFormatter.format(data.cost)}" width="100%" textAlign="left"/>
+                  </fx:Component>
+               </mx:itemRenderer>
+            </mx:DataGridColumn>
+            <mx:DataGridColumn dataField="invCount" headerText="Count"/>
+         </mx:columns>
+      </mx:DataGrid>
+		<s:HGroup>
+			<s:Button label="Restock Inventory" click="{restockInventory()}" styleName="restockBtn"/>
+			<s:Button label="Add Inventory Entry" click="{addInventoryEntry()}" styleName="restockBtn"/>
+		</s:HGroup>
+
+   </s:VGroup>
+</s:NavigatorContent>

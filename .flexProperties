@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<flexProperties enableServiceManager="false" flexServerFeatures="4" flexServerType="2" fmlDataModelLocation=".model/TestBaristamaticGrailsFlexClient.fml" serverContextRoot="/TestBaristamaticGroovySpringFlexServer" serverRoot="C:/EclipseWorkspaces/workspace/TestBaristamaticGroovySpringFlexServer/WebContent" serverRootURL="http://localhost:8080/TestBaristamaticGroovySpringFlexServer" toolCompile="true" useServerFlexSDK="false" version="2"/>

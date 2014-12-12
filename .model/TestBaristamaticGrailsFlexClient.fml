@@ -1,0 +1,176 @@
+
+<model xmlns="http://ns.adobe.com/Fiber/1.0">
+  <annotation name="ActionScriptGeneration">
+    <item name="FullyQualifyReferences">true</item>
+  </annotation>
+  <service name="BaristaService">
+    <annotation name="ActionScriptGeneration">
+      <item name="ServiceType">RemoteObject</item>
+      <item name="Package">services</item>
+      <item name="Destination">baristaService</item>
+    </annotation>
+    <annotation name="ServiceConfig">
+      <item name="DEFAULT_ENTITY_PACKAGE">valueObjects</item>
+      <item name="contextRoot">/TestBaristamaticGroovySpringFlexServer</item>
+      <item name="rootUrl">http://localhost:8080/TestBaristamaticGroovySpringFlexServer</item>
+      <item name="LINKED_FILE"></item>
+      <item name="ABSOLUTE_ENDPOINT">http://localhost:8080/TestBaristamaticGroovySpringFlexServer/messagebroker/amf</item>
+    </annotation>
+    <annotation name="ServiceTypeGroup">
+      <item name="ServiceBackendType">BlazeDS</item>
+    </annotation>
+    <function name="getDrinks" return-type="Drink[]">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="returnType">Drink</item>
+      </annotation>
+      <annotation name="ValidProperties">
+        <item name="propertySpecifier">recipe,name,number,displayName,cost,inStock</item>
+      </annotation>
+    </function>
+    <function name="orderDrink" return-type="void">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">string</item>
+      </annotation>
+      <parameter name="arg0" type="string"/>
+    </function>
+    <function name="reStockInventory" return-type="void">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+    </function>
+    <function name="getDrinkCost" return-type="string">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">string</item>
+        <item name="returnType">string</item>
+      </annotation>
+      <parameter name="arg0" type="string"/>
+    </function>
+    <function name="addNewIngredient" return-type="void">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">InventoryEntry</item>
+      </annotation>
+      <parameter name="arg0" type="InventoryEntry"/>
+    </function>
+    <function name="getDrink" return-type="Drink">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">string</item>
+        <item name="returnType">Drink</item>
+      </annotation>
+      <parameter name="arg0" type="string"/>
+    </function>
+    <function name="getInventoryAvailable" return-type="InventoryEntry[]">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="returnType">InventoryEntry</item>
+      </annotation>
+    </function>
+    <function name="areIngredientsAvailable" return-type="boolean">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">string</item>
+        <item name="returnType">boolean</item>
+      </annotation>
+      <parameter name="arg0" type="string"/>
+    </function>
+  </service>
+  <entity name="InventoryEntry">
+    <annotation name="EntityProperties">
+      <item name="EntityOriginalName">InventoryEntry</item>
+    </annotation>
+    <annotation name="ServerProperties">
+      <item name="RemoteClass">com.baristamatic.domain.InventoryEntry</item>
+      <item name="IncludeRemoteClass">nonempty</item>
+    </annotation>
+    <annotation name="service Group">
+      <item name="service">Dummy,BaristaService</item>
+    </annotation>
+    <annotation name="ActionScriptGeneration">
+      <item name="Package">valueObjects</item>
+    </annotation>
+    <property name="count" type="integer"/>
+    <property name="name" type="string"/>
+    <property name="displayName" type="string"/>
+    <property name="cost" type="string"/>
+  </entity>
+  <entity name="InventoryEntryDto">
+    <annotation name="EntityProperties">
+      <item name="EntityOriginalName">InventoryEntryDto</item>
+    </annotation>
+    <annotation name="ServerProperties">
+      <item name="RemoteClass">com.baristamatic.dto.InventoryEntryDto</item>
+      <item name="IncludeRemoteClass">nonempty</item>
+    </annotation>
+    <annotation name="service Group">
+      <item name="service">BaristaService</item>
+    </annotation>
+    <annotation name="ActionScriptGeneration">
+      <item name="Package">valueObjects</item>
+    </annotation>
+    <property name="displayName" type="string"/>
+    <property name="cost" type="string"/>
+    <property name="invCount" type="integer"/>
+  </entity>
+  <entity name="Drink">
+    <annotation name="EntityProperties">
+      <item name="EntityOriginalName">Drink</item>
+    </annotation>
+    <annotation name="ServerProperties">
+      <item name="RemoteClass">com.baristamatic.domain.Drink</item>
+      <item name="IncludeRemoteClass">nonempty</item>
+    </annotation>
+    <annotation name="service Group">
+      <item name="service">Dummy,BaristaService</item>
+    </annotation>
+    <annotation name="getDrinks">
+      <item name="propertySpecifier">recipe,name,number,displayName,cost,inStock</item>
+    </annotation>
+    <annotation name="ActionScriptGeneration">
+      <item name="Package">valueObjects</item>
+    </annotation>
+    <property name="recipe" type="opaque"/>
+    <property name="name" type="string"/>
+    <property name="number" type="integer"/>
+    <property name="displayName" type="string"/>
+    <property name="cost" type="string"/>
+    <property name="inStock" type="boolean"/>
+  </entity>
+  <entity name="DrinkDto">
+    <annotation name="EntityProperties">
+      <item name="EntityOriginalName">DrinkDto</item>
+    </annotation>
+    <annotation name="ServerProperties">
+      <item name="RemoteClass">com.baristamatic.dto.DrinkDto</item>
+      <item name="IncludeRemoteClass">nonempty</item>
+    </annotation>
+    <annotation name="service Group">
+      <item name="service">BaristaService</item>
+    </annotation>
+    <annotation name="ActionScriptGeneration">
+      <item name="Package">valueObjects</item>
+    </annotation>
+    <property name="recipe" type="string[]"/>
+    <property name="number" type="integer"/>
+    <property name="displayName" type="string"/>
+    <property name="inStock" type="boolean"/>
+    <property name="cost" type="string"/>
+  </entity>
+</model>

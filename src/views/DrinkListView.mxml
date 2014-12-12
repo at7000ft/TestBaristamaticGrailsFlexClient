@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:NavigatorContent xmlns:fx="http://ns.adobe.com/mxml/2009"
+                    xmlns:s="library://ns.adobe.com/flex/spark"
+                    xmlns:mx="library://ns.adobe.com/flex/mx"
+                    width="100%"
+                    height="100%">
+   <!-- drinkListView.mxml ~ Author: rholland ~ Dec 2, 2010 ~~~~~~~~~~~~~~~~~~~~~~ -->
+
+   <fx:Script>
+      <![CDATA[
+         import controllers.ApplicationEvents;
+         import controllers.ApplicationModel;
+
+         import events.OrderEvent;
+
+         import mx.controls.Alert;
+         import mx.managers.PopUpManager;
+
+         import org.springextensions.actionscript.core.event.EventBus;
+
+         import domain.Drink;
+
+         public var drinkTimer:Timer=new Timer(1000, 1);
+         private var drinkAlert:Alert;
+         //The ApplicationModel singleton instance is created by Spring and injected into the ApplicationController
+         //singleton. That ApplicationModel instance is also injected by autowire here. The ApplicationModel>>drinklist
+         //is also Bindable and updates the DataGrid when changed.
+         [Autowired]
+         [Bindable]
+         public var appModel:ApplicationModel;
+
+         private function orderDrink():void {
+            var index:int=dg.selectedIndex;
+            trace("orderDrink: index - " + index);
+            trace("orderDrink: drinklist size - " + appModel.drinklist.length);
+            if (index < 0) {
+               Alert.show("Select a drink, moron", "Opps..");
+               return;
+            }
+            var selectedDrink:Object=appModel.drinklist[index];
+            if (!selectedDrink.inStock) {
+               Alert.show("Out of ingredients to make that one, select another", "Order Problem");
+               return;
+            }
+            var event:OrderEvent=new OrderEvent(ApplicationEvents.ORDER_DRINK);
+            event.orderDrinkNumber=selectedDrink.number;
+            trace("orderDrink: dispatching event for drink " + event.orderDrinkNumber);
+
+            //Display an Alert that times out and removes itself
+            drinkTimer.addEventListener(TimerEvent.TIMER_COMPLETE, alertTimerComplete);
+            drinkAlert=Alert.show("One " + selectedDrink.displayName + " commin up", "Drink Ordered");
+            drinkTimer.start();
+
+            //Have the ApplicationController order the drink
+            EventBus.dispatchEvent(event);
+         }
+
+         public function alertTimerComplete(event:TimerEvent):void {
+            PopUpManager.removePopUp(drinkAlert);
+         }
+
+         private function isItemSelectable():Boolean {
+            var instock:Boolean=appModel.drinklist[dg.selectedIndex].inStock;
+            trace("isItemSelectable - " + instock);
+            return false;
+         }
+      ]]>
+   </fx:Script>
+
+   <!-- Declarations ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+   <fx:Declarations>
+      <mx:CurrencyFormatter id="usdFormatter"
+                            precision="2"
+                            currencySymbol="$"
+                            decimalSeparatorFrom="."
+                            decimalSeparatorTo="."
+                            useNegativeSign="true"
+                            useThousandsSeparator="true"
+                            alignSymbol="left"/>
+   </fx:Declarations>
+
+   <!-- UI components ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+   <s:VGroup height="100%" width="100%" horizontalAlign="center">
+
+      <s:Label text="Drink List" fontSize="24" styleName="logo"/>
+      <mx:DataGrid id="dg"
+                   dataProvider="{appModel.drinklist}"
+                   variableRowHeight="true"
+                   rowCount="{appModel.drinklist.length}"
+                   fontSize="14"
+                   width="100%"
+                   height="100%"
+                   click="{orderBtn.enabled=true}">
+         <mx:columns>
+            <mx:DataGridColumn dataField="number" headerText="Number"/>
+            <mx:DataGridColumn dataField="displayName" headerText="Display Name"/>
+            <mx:DataGridColumn dataField="cost" headerText="Cost">
+               <mx:itemRenderer>
+                  <fx:Component>
+                     <mx:Label text="{outerDocument.usdFormatter.format(data.cost)}" width="100%" textAlign="left"/>
+                  </fx:Component>
+               </mx:itemRenderer>
+            </mx:DataGridColumn>
+            <mx:DataGridColumn dataField="inStock" headerText="In Stock"/>
+            <mx:DataGridColumn headerText="Recipe" paddingRight="5">
+               <mx:itemRenderer>
+                  <fx:Component>
+                     <mx:VBox verticalGap="2" paddingLeft="5">
+                        <mx:List id="recipeItems" dataProvider="{data.recipe}" width="100%" rowCount="{data.recipe.length}"/>
+                     </mx:VBox>
+                  </fx:Component>
+               </mx:itemRenderer>
+            </mx:DataGridColumn>
+         </mx:columns>
+      </mx:DataGrid>
+      <s:Button id="orderBtn"
+                label="Order Drink"
+                click="{orderDrink()}"
+                enabled="false"
+                skinClass="skins.OrderButtonSkin"/>
+   </s:VGroup>
+</s:NavigatorContent>
